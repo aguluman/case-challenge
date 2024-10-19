@@ -2,7 +2,9 @@ import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-export const HabariDataSource = new DataSource({
+
+
+const testDataSource = new DataSource({
     type: 'postgres',
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT, 10),
@@ -11,13 +13,12 @@ export const HabariDataSource = new DataSource({
     database: process.env.DB_NAME,
     entities: ['dist/src/entities/*.js'],
     migrations: ['src/migrations/*.ts'],
-    synchronize: true, // For dev: true, //For production: false
+    synchronize: true,
 });
 
-HabariDataSource.initialize()
-    .then(() => {
-        console.log('Data Source has been initialized!');
-    })
-    .catch((err) => {
-        console.error('Error during Data Source initialization:', err);
+describe('ORM Configuration', () => {
+    it('should initialize the data source successfully', async () => {
+        await expect(testDataSource.initialize()).resolves.not.toThrow();
+        await testDataSource.destroy();
     });
+});
