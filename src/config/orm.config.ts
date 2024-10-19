@@ -11,7 +11,7 @@ export const HabariDataSource = new DataSource({
   database: process.env.DB_NAME,
   entities: ['src/entities/*.ts'],
   migrations: ['src/migrations/*.ts'],
-  synchronize: true, // For dev, false in production
+  synchronize: true, // For dev: true, //For production: false
 });
 
 HabariDataSource.initialize()
