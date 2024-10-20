@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     ManyToOne,
     OneToMany,
+    UpdateDateColumn,
 } from 'typeorm';
 import { Merchant } from './merchant.entity';
 import { CardTransaction } from './card-transaction.entity';
@@ -27,12 +28,21 @@ export class Payout {
     @CreateDateColumn()
     created_at: Date;
 
+    @UpdateDateColumn()
+    updated_at: Date;
+
     @ManyToOne(() => Merchant, (merchant) => merchant.payouts)
     merchant: Merchant;
 
-    @OneToMany(() => CardTransaction, (cardTransaction) => cardTransaction.payout)
+    @OneToMany(
+        () => CardTransaction,
+        (cardTransaction) => cardTransaction.payout,
+    )
     card_transactions: CardTransaction[];
 
-    @OneToMany(() => VirtualAccountTransaction, (virtualAccountTransaction) => virtualAccountTransaction.payout)
+    @OneToMany(
+        () => VirtualAccountTransaction,
+        (virtualAccountTransaction) => virtualAccountTransaction.payout,
+    )
     virtual_account_transactions: VirtualAccountTransaction[];
 }

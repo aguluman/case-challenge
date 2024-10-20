@@ -5,6 +5,7 @@ import {
     CreateDateColumn,
     Index,
     ManyToOne,
+    UpdateDateColumn,
 } from 'typeorm';
 import { TransactionStatus } from '../enums/transaction.status';
 import { Merchant } from './merchant.entity';
@@ -55,6 +56,9 @@ export class CardTransaction {
 
     @CreateDateColumn()
     created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 
     @ManyToOne(() => Merchant, (merchant) => merchant.card_transactions)
     merchant: Merchant;
