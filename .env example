@@ -1,0 +1,15 @@
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+
+
+/*
+Then run the following command to create a new database
+    npx tsc
+=> then
+    npx typeorm schema:sync -d dist/src/config/orm.config.js
+followed by
+    npx typeorm migration:run -d dist/src/config/orm.config.js
+*/
