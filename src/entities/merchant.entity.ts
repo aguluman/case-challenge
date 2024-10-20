@@ -22,23 +22,23 @@ export class Merchant {
     email: string;
 
     @Column({ type: 'varchar', length: 255 })
-    bankAccountNumber: string;
+    bank_account_number: string;
 
     @Column({ type: 'varchar', length: 255 })
-    bankCode: string;
+    bank_code: string;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 
     // Relations to Card and Virtual Account Transactions
     @OneToMany(() => CardTransaction, (cardTransaction) => cardTransaction.merchant)
-    cardTransactions: CardTransaction[];
+    card_transactions: CardTransaction[];
 
     @OneToMany(() => VirtualAccountTransaction, (virtualAccountTransaction) => virtualAccountTransaction.merchant)
-    virtualAccountTransactions: VirtualAccountTransaction[];
+    virtual_account_transactions: VirtualAccountTransaction[];
 
     // Relation to Payouts
     @OneToMany(() => Payout, (payout) => payout.merchant)

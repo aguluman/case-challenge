@@ -10,7 +10,7 @@ export const HabariDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     entities: ['dist/src/entities/*.js'],
-    migrations: ['src/migrations/*.ts'],
+    migrations: ['dist/src/migrations/*.js'],
     synchronize: true, // For dev: true, //For production: false
 });
 
