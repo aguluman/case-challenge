@@ -4,6 +4,6 @@ import { logger } from './logger.utils';
 
 export const errorHandling = (error: HttpException, res: Response) => {
   logger(error.message);
-  res.status(error.status).send(error.message);
+  const errorResponse = error.toErrorResponseDTO();
+  res.status(errorResponse.statusCode).send(errorResponse);
 };
-

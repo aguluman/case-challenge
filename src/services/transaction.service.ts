@@ -6,8 +6,7 @@ import { VirtualAccountTransactionResponseDTO } from 'src/dtos/response-dtos/vir
 import { ITransactionRepository } from '../repositories/irepository/itransaction.repository';
 import { ITransactionService } from './iservice/itransaction.service';
 import { generateUniqueReference } from '../utils/generate-unique-reference';
-import { TransactionStatus } from 'src/enums/transaction.status';
-
+import { TransactionStatus } from '../enums/transaction.status';
 @injectable()
 export class TransactionService implements ITransactionService {
     constructor(

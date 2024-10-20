@@ -1,5 +1,7 @@
 export class ErrorResponseDTO {
-    statusCode: number;
-    message: string;
-    details?: string[];
+    constructor(
+        public statusCode: number,
+        public message: string,
+        public details?: any,
+    ) {}
 }
