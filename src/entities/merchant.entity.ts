@@ -20,10 +20,10 @@ export class Merchant {
     @Column({ type: 'varchar', length: 255, unique: true })
     email: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 10 })
     bank_account_number: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 9 })
     bank_code: string;
 
     @CreateDateColumn()

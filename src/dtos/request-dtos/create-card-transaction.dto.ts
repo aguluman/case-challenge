@@ -6,5 +6,6 @@ export class CreateCardTransactionDTO {
     expirationDate: string; // formatted as 'MM/YY'
     cvv: string;
     currency: string;
+    merchant_id: string
     transactionType: string = 'card'; // Default transaction type
 }

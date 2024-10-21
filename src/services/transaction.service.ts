@@ -16,7 +16,18 @@ export class TransactionService implements ITransactionService {
     }
 
     async createCardTransaction(data: CreateCardTransactionDTO): Promise<CardTransactionResponseDTO> {
-        const { value, cardNumber, ...otherDetails } = data;
+        const {
+            value,
+            cardNumber,
+            description,
+            cardHolderName,
+            expirationDate,
+            cvv,
+            currency,
+            merchant_id,
+            transactionType,
+            ...otherDetails
+        } = data;
         const lastFourDigits = cardNumber.slice(-4);
         const fee = value * 0.03;
 
@@ -24,11 +35,17 @@ export class TransactionService implements ITransactionService {
             ...otherDetails,
             transaction_value: value,
             card_number_last4: lastFourDigits,
+            transaction_desc: description,
+            cardholder_name: cardHolderName,
+            card_expiration_date: expirationDate,
+            currency: currency,
+            cvv: cvv,
             status: TransactionStatus.PENDING, // Set as pending,
             fee,
+            merchant_id,
+            transaction_type: transactionType,
             reference: generateUniqueReference(),
         });
-
         return {
             id: transaction.id,
             value: transaction.transaction_value,
@@ -42,21 +59,39 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'card',
+            transactionType: transaction.transaction_type,
         };
     }
 
     async createVirtualAccountTransaction(data: CreateVirtualAccountTransactionDTO): Promise<VirtualAccountTransactionResponseDTO> {
-        const { value, ...otherDetails } = data;
+        const {
+            value,
+            description,
+            accountName,
+            accountNumber,
+            bankCode,
+            currency,
+            merchant_id,
+            transactionType,
+            ...otherDetails
+        } = data;
         const fee = value * 0.05;
 
-        const transaction = await this.transactionRepo.createVirtualAccountTransaction({
-            ...otherDetails,
-            transaction_value: value,
-            status: TransactionStatus.SUCCESS, // Set as success,
-            fee,
-            reference: generateUniqueReference(),
-        });
+        const transaction =
+            await this.transactionRepo.createVirtualAccountTransaction({
+                ...otherDetails,
+                transaction_value: value,
+                transaction_desc: description,
+                account_name: accountName,
+                account_number: accountNumber,
+                bank_code: bankCode,
+                status: TransactionStatus.SUCCESS, // Set as success,
+                fee,
+                currency: currency,
+                merchant_id,
+                transaction_type: transactionType,
+                reference: generateUniqueReference(),
+            });
 
         return {
             id: transaction.id,
@@ -71,7 +106,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'virtual_account',
+            transactionType: transaction.transaction_type,
         };
     }
 
@@ -91,7 +126,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'card',
+            transactionType: transaction.transaction_type,
         };
     }
 
@@ -111,7 +146,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'card',
+            transactionType: transaction.transaction_type,
         }));
     }
 
@@ -131,7 +166,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'virtual_account',
+            transactionType: transaction.transaction_type,
         }));
     }
 }
