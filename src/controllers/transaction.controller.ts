@@ -9,7 +9,7 @@ import { ITransactionService } from '../services/iservice/itransaction.service';
 export class TransactionController {
     constructor(
         @inject('TransactionService')
-        private transactionService: ITransactionService,
+        private readonly transactionService: ITransactionService,
     ) {}
 
     async createCardTransaction(

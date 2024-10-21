@@ -7,7 +7,7 @@ import { IPayoutService } from '../services/iservice/ipayout.service';
 @injectable()
 export class PayoutController {
     constructor(
-        @inject('PayoutService') private payoutService: IPayoutService,
+        @inject('PayoutService') private readonly payoutService: IPayoutService,
     ) {}
 
     async createPayout(req: Request, res: Response): Promise<Response> {

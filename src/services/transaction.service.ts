@@ -7,11 +7,13 @@ import { ITransactionRepository } from '../repositories/irepository/itransaction
 import { ITransactionService } from './iservice/itransaction.service';
 import { generateUniqueReference } from '../utils/generate-unique-reference';
 import { TransactionStatus } from '../enums/transaction.status';
+
 @injectable()
 export class TransactionService implements ITransactionService {
     constructor(
-        @inject('TransactionRepository') private transactionRepo: ITransactionRepository,
-    ) {}
+        @inject('TransactionRepository') private readonly transactionRepo: ITransactionRepository,
+    ) {
+    }
 
     async createCardTransaction(data: CreateCardTransactionDTO): Promise<CardTransactionResponseDTO> {
         const { value, cardNumber, ...otherDetails } = data;
@@ -30,12 +32,17 @@ export class TransactionService implements ITransactionService {
         return {
             id: transaction.id,
             value: transaction.transaction_value,
+            description: transaction.transaction_desc,
             cardNumberLast4: transaction.card_number_last4,
+            cardHolderName: transaction.cardholder_name,
+            expirationDate: transaction.card_expiration_date,
+            currency: transaction.currency,
             status: transaction.status,
             fee: transaction.fee,
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
+            transactionType: 'card',
         };
     }
 
@@ -43,23 +50,28 @@ export class TransactionService implements ITransactionService {
         const { value, ...otherDetails } = data;
         const fee = value * 0.05;
 
-        const transaction =
-            await this.transactionRepo.createVirtualAccountTransaction({
-                ...otherDetails,
-                transaction_value: value,
-                status: TransactionStatus.SUCCESS, // Set as success,
-                fee,
-                reference: generateUniqueReference(),
-            });
+        const transaction = await this.transactionRepo.createVirtualAccountTransaction({
+            ...otherDetails,
+            transaction_value: value,
+            status: TransactionStatus.SUCCESS, // Set as success,
+            fee,
+            reference: generateUniqueReference(),
+        });
 
         return {
             id: transaction.id,
             value: transaction.transaction_value,
+            description: transaction.transaction_desc,
+            accountName: transaction.account_name,
+            accountNumber: transaction.account_number,
+            bankCode: transaction.bank_code,
+            currency: transaction.currency,
             status: transaction.status,
             fee: transaction.fee,
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
+            transactionType: 'virtual_account',
         };
     }
 
@@ -69,12 +81,17 @@ export class TransactionService implements ITransactionService {
         return {
             id: transaction.id,
             value: transaction.transaction_value,
+            description: transaction.transaction_desc,
             cardNumberLast4: transaction.card_number_last4,
+            cardHolderName: transaction.cardholder_name,
+            expirationDate: transaction.card_expiration_date,
+            currency: transaction.currency,
             status: transaction.status,
             fee: transaction.fee,
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
+            transactionType: 'card',
         };
     }
 
@@ -84,12 +101,17 @@ export class TransactionService implements ITransactionService {
         return transactions.map(transaction => ({
             id: transaction.id,
             value: transaction.transaction_value,
+            description: transaction.transaction_desc,
             cardNumberLast4: transaction.card_number_last4,
+            cardHolderName: transaction.cardholder_name,
+            expirationDate: transaction.card_expiration_date,
+            currency: transaction.currency,
             status: transaction.status,
             fee: transaction.fee,
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
+            transactionType: 'card',
         }));
     }
 
@@ -99,11 +121,17 @@ export class TransactionService implements ITransactionService {
         return transactions.map(transaction => ({
             id: transaction.id,
             value: transaction.transaction_value,
+            description: transaction.transaction_desc,
+            accountName: transaction.account_name,
+            accountNumber: transaction.account_number,
+            bankCode: transaction.bank_code,
+            currency: transaction.currency,
             status: transaction.status,
             fee: transaction.fee,
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
+            transactionType: 'virtual_account',
         }));
     }
 }

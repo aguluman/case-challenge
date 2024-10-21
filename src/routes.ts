@@ -1,10 +1,9 @@
-import { Router } from 'express';
+import express from 'express';
 import { container } from 'tsyringe';
 import { PayoutController } from './controllers/payout.controller';
 import { TransactionController } from './controllers/transaction.controller';
-import { asyncHandler } from './utils/async-handler';
 
-const router = Router();
+const router = express.Router();
 const transactionController = container.resolve(TransactionController);
 const payoutController = container.resolve(PayoutController);
 
@@ -41,12 +40,13 @@ const payoutController = container.resolve(PayoutController);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.post(
-    '/transactions/card',
-    asyncHandler((req, res, next) =>
-        transactionController.createCardTransaction(req, res),
-    ),
-);
+router.post('/transactions/card', async (req, res) => {
+    try {
+        await transactionController.createCardTransaction(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -80,12 +80,13 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.post(
-    '/transactions/virtual-account',
-    asyncHandler((req, res, next) =>
-        transactionController.createVirtualAccountTransaction(req, res),
-    ),
-);
+router.post('/transactions/virtual-account', async (req, res) => {
+    try {
+        await transactionController.createVirtualAccountTransaction(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -119,12 +120,13 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.post(
-    '/transactions/settle-card',
-    asyncHandler((req, res, next) =>
-        transactionController.settleCardTransaction(req, res),
-    ),
-);
+router.post('/transactions/settle-card', async (req, res) => {
+    try {
+        await transactionController.settleCardTransaction(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -154,12 +156,13 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.get(
-    '/get-transactions/card',
-    asyncHandler((req, res, next) =>
-        transactionController.listAllCardTransactions(req, res),
-    ),
-);
+router.get('/get-transactions/card', async (req, res) => {
+    try {
+        await transactionController.listAllCardTransactions(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -189,12 +192,13 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.get(
-    '/get-transactions/virtual-account',
-    asyncHandler((req, res, next) =>
-        transactionController.listAllVirtualAccountTransactions(req, res),
-    ),
-);
+router.get('/get-transactions/virtual-account', async (req, res) => {
+    try {
+        await transactionController.listAllVirtualAccountTransactions(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 
 // Payout routes
@@ -230,10 +234,13 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.post(
-    '/payouts',
-    asyncHandler((req, res, next) => payoutController.createPayout(req, res)),
-);
+router.post('/payouts', async (req, res) => {
+    try {
+        await payoutController.createPayout(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -269,10 +276,13 @@ router.post(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.get(
-    '/get-payouts/:merchantId',
-    asyncHandler((req, res, next) => payoutController.listPayouts(req, res)),
-);
+router.get('/get-payouts/:merchantId', async (req, res) => {
+    try {
+        await payoutController.listPayouts(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 /**
  * @swagger
@@ -308,11 +318,12 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponseDTO'
  */
-router.get(
-    '/get-balance/:merchantId',
-    asyncHandler((req, res, next) =>
-        payoutController.getMerchantBalance(req, res),
-    ),
-);
+router.get('/get-balance/:merchantId', async (req, res) => {
+    try {
+        await payoutController.getMerchantBalance(req, res);
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+});
 
 export default router;

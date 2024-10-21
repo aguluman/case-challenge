@@ -9,10 +9,40 @@ import { TransactionStatus } from '../enums/transaction.status';
 export class TransactionRepository implements ITransactionRepository {
     constructor(
         @inject('CardTransactionRepository')
-        private cardTransactionRepo: Repository<CardTransaction>,
+        private readonly cardTransactionRepo: Repository<CardTransaction>,
         @inject('VirtualAccountTransactionRepository')
-        private virtualAccountRepo: Repository<VirtualAccountTransaction>,
-    ) {}
+        private readonly virtualAccountRepo: Repository<VirtualAccountTransaction>,
+    ) {
+    }
+
+    async createCardTransaction(
+        data: Partial<CardTransaction>,
+    ): Promise<CardTransaction> {
+        const transaction = this.cardTransactionRepo.create(data);
+        return this.cardTransactionRepo.save(transaction);
+    }
+
+    async createVirtualAccountTransaction(
+        data: Partial<VirtualAccountTransaction>,
+    ): Promise<VirtualAccountTransaction> {
+        const transaction = this.virtualAccountRepo.create(data);
+        return this.virtualAccountRepo.save(transaction);
+    }
+
+    async settleCardTransaction(
+        reference: string,
+        cardNumber: string,
+    ): Promise<CardTransaction> {
+        const transaction = await this.cardTransactionRepo.findOneBy({
+            reference,
+            card_number_last4: cardNumber,
+        });
+        if (transaction) {
+            transaction.status = TransactionStatus.SUCCESS;
+            return this.cardTransactionRepo.save(transaction);
+        }
+        throw new Error('Transaction not found');
+    }
 
     async findSettledTransactionsByMerchant(
         merchant_id: string,
@@ -51,35 +81,6 @@ export class TransactionRepository implements ITransactionRepository {
         }
 
         return { availableBalance, pendingSettlementBalance };
-    }
-
-    async createCardTransaction(
-        data: Partial<CardTransaction>,
-    ): Promise<CardTransaction> {
-        const transaction = this.cardTransactionRepo.create(data);
-        return this.cardTransactionRepo.save(transaction);
-    }
-
-    async createVirtualAccountTransaction(
-        data: Partial<VirtualAccountTransaction>,
-    ): Promise<VirtualAccountTransaction> {
-        const transaction = this.virtualAccountRepo.create(data);
-        return this.virtualAccountRepo.save(transaction);
-    }
-
-    async settleCardTransaction(
-        reference: string,
-        cardNumber: string,
-    ): Promise<CardTransaction> {
-        const transaction = await this.cardTransactionRepo.findOneBy({
-            reference,
-            card_number_last4: cardNumber,
-        });
-        if (transaction) {
-            transaction.status = TransactionStatus.SUCCESS;
-            return this.cardTransactionRepo.save(transaction);
-        }
-        throw new Error('Transaction not found');
     }
 
     async listAllCardTransactions(): Promise<CardTransaction[]> {

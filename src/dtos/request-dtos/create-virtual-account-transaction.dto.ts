@@ -5,4 +5,5 @@ export class CreateVirtualAccountTransactionDTO {
     accountNumber: string;
     bankCode: string;
     currency: string;
+    transactionType: string = 'virtual_account'; // Default transaction type
 }

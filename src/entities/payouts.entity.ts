@@ -1,3 +1,4 @@
+// payouts.entity.ts
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -8,8 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Merchant } from './merchant.entity';
-import { CardTransaction } from './card-transaction.entity';
-import { VirtualAccountTransaction } from './virtual-account-transaction.entity';
+import { Transaction } from './transaction.entity';
 
 @Entity('payouts')
 export class Payout {
@@ -34,15 +34,6 @@ export class Payout {
     @ManyToOne(() => Merchant, (merchant) => merchant.payouts)
     merchant: Merchant;
 
-    @OneToMany(
-        () => CardTransaction,
-        (cardTransaction) => cardTransaction.payout,
-    )
-    card_transactions: CardTransaction[];
-
-    @OneToMany(
-        () => VirtualAccountTransaction,
-        (virtualAccountTransaction) => virtualAccountTransaction.payout,
-    )
-    virtual_account_transactions: VirtualAccountTransaction[];
+    @OneToMany(() => Transaction, (transaction) => transaction.payout)
+    transactions: Transaction[];
 }

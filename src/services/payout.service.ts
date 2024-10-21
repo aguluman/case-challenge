@@ -10,10 +10,11 @@ import { IPayoutService } from './iservice/ipayout.service';
 @injectable()
 export class PayoutService implements IPayoutService {
     constructor(
-        @inject('PayoutRepository') private payoutRepo: IPayoutRepository,
-        @inject('MerchantRepository') private merchantRepo: IMerchantRepository,
-        @inject('TransactionRepository') private transactionRepo: ITransactionRepository,
-    ) {}
+        @inject('PayoutRepository') private readonly payoutRepo: IPayoutRepository,
+        @inject('MerchantRepository') private readonly merchantRepo: IMerchantRepository,
+        @inject('TransactionRepository') private readonly transactionRepo: ITransactionRepository,
+    ) {
+    }
 
     async createPayout(data: PayoutRequestDTO): Promise<PayoutResponseDto> {
         const { merchant_id } = data;
@@ -64,15 +65,10 @@ export class PayoutService implements IPayoutService {
 
         return payouts.map((payout) => {
             const settledTransactions =
-                payout.card_transactions.length +
-                payout.virtual_account_transactions.length;
+                payout.transactions.length;
 
             const feeDeducted =
-                payout.card_transactions.reduce(
-                    (total, transaction) => total + transaction.fee,
-                    0,
-                ) +
-                payout.virtual_account_transactions.reduce(
+                payout.transactions.reduce(
                     (total, transaction) => total + transaction.fee,
                     0,
                 );
