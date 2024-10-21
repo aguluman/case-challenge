@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
 import { Repository } from 'typeorm';
-import { ITransactionRepository } from './irepository/itransaction.repository';
 import { CardTransaction } from '../entities/card-transaction.entity';
 import { VirtualAccountTransaction } from '../entities/virtual-account-transaction.entity';
 import { TransactionStatus } from '../enums/transaction.status';
+import { ITransactionRepository } from './irepository/itransaction.repository';
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
@@ -12,8 +12,7 @@ export class TransactionRepository implements ITransactionRepository {
         private readonly cardTransactionRepo: Repository<CardTransaction>,
         @inject('VirtualAccountTransactionRepository')
         private readonly virtualAccountRepo: Repository<VirtualAccountTransaction>,
-    ) {
-    }
+    ) {}
 
     async createCardTransaction(
         data: Partial<CardTransaction>,

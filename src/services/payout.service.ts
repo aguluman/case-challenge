@@ -10,11 +10,13 @@ import { IPayoutService } from './iservice/ipayout.service';
 @injectable()
 export class PayoutService implements IPayoutService {
     constructor(
-        @inject('PayoutRepository') private readonly payoutRepo: IPayoutRepository,
-        @inject('MerchantRepository') private readonly merchantRepo: IMerchantRepository,
-        @inject('TransactionRepository') private readonly transactionRepo: ITransactionRepository,
-    ) {
-    }
+        @inject('PayoutRepository')
+        private readonly payoutRepo: IPayoutRepository,
+        @inject('MerchantRepository')
+        private readonly merchantRepo: IMerchantRepository,
+        @inject('TransactionRepository')
+        private readonly transactionRepo: ITransactionRepository,
+    ) {}
 
     async createPayout(data: PayoutRequestDTO): Promise<PayoutResponseDto> {
         const { merchant_id } = data;
@@ -64,14 +66,12 @@ export class PayoutService implements IPayoutService {
         });
 
         return payouts.map((payout) => {
-            const settledTransactions =
-                payout.transactions.length;
+            const settledTransactions = payout.transactions.length;
 
-            const feeDeducted =
-                payout.transactions.reduce(
-                    (total, transaction) => total + transaction.fee,
-                    0,
-                );
+            const feeDeducted = payout.transactions.reduce(
+                (total, transaction) => total + transaction.fee,
+                0,
+            );
 
             return {
                 merchantId: payout.merchant_id,
@@ -86,7 +86,6 @@ export class PayoutService implements IPayoutService {
     async getMerchantBalance(
         merchantId: string,
     ): Promise<{ availableBalance: number; pendingSettlementBalance: number }> {
-
         const { availableBalance, pendingSettlementBalance } =
             await this.transactionRepo.getMerchantBalance(merchantId);
         return { availableBalance, pendingSettlementBalance };

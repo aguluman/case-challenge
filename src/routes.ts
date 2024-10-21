@@ -10,7 +10,7 @@ const payoutController = container.resolve(PayoutController);
 // Transaction routes
 /**
  * @swagger
- * /transactions/card:
+ * /api/transactions/card:
  *   post:
  *     summary: Create a card transaction
  *     tags: [Transactions]
@@ -50,7 +50,7 @@ router.post('/transactions/card', async (req, res) => {
 
 /**
  * @swagger
- * /transactions/virtual-account:
+ * /api/transactions/virtual-account:
  *   post:
  *     summary: Create a virtual account transaction
  *     tags: [Transactions]
@@ -90,7 +90,7 @@ router.post('/transactions/virtual-account', async (req, res) => {
 
 /**
  * @swagger
- * /transactions/settle-card:
+ * api/transactions/settle-card:
  *   post:
  *     summary: Settle a card transaction
  *     tags: [Transactions]
@@ -130,7 +130,7 @@ router.post('/transactions/settle-card', async (req, res) => {
 
 /**
  * @swagger
- * /get-transactions/card:
+ * /api/get-transactions/card:
  *   get:
  *     summary: List all card transactions
  *     tags: [Transactions]
@@ -166,7 +166,7 @@ router.get('/get-transactions/card', async (req, res) => {
 
 /**
  * @swagger
- * /get-transactions/virtual-account:
+ * /api/get-transactions/virtual-account:
  *   get:
  *     summary: List all virtual account transactions
  *     tags: [Transactions]
@@ -200,11 +200,10 @@ router.get('/get-transactions/virtual-account', async (req, res) => {
     }
 });
 
-
 // Payout routes
 /**
  * @swagger
- * /payouts:
+ * /api/payouts:
  *   post:
  *     summary: Create a payout
  *     tags: [Payouts]
@@ -244,7 +243,7 @@ router.post('/payouts', async (req, res) => {
 
 /**
  * @swagger
- * /get-payouts/{merchantId}:
+ * /api/get-payouts/{merchantId}:
  *   get:
  *     summary: List payouts for a merchant
  *     tags: [Payouts]
@@ -286,7 +285,7 @@ router.get('/get-payouts/:merchantId', async (req, res) => {
 
 /**
  * @swagger
- * /get-balance/{merchantId}:
+ * /api/get-balance/{merchantId}:
  *   get:
  *     summary: Get merchant balance
  *     tags: [Payouts]

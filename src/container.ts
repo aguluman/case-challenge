@@ -1,4 +1,3 @@
-// src/container.ts
 import { container } from 'tsyringe';
 import { Repository } from 'typeorm';
 import { PayoutRepository } from './repositories/payout.repository';

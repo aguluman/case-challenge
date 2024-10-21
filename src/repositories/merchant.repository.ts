@@ -1,4 +1,4 @@
-import { injectable, inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { Repository } from 'typeorm';
 import { Merchant } from '../entities/merchant.entity';
 import { IMerchantRepository } from './irepository/imerchant.repository';
@@ -7,14 +7,14 @@ import { IMerchantRepository } from './irepository/imerchant.repository';
 export class MerchantRepository implements IMerchantRepository {
     constructor(
         @inject('MerchantRepository')
-        private merchantRepo: Repository<Merchant>,
+        private readonly merchantRepo: Repository<Merchant>,
     ) {}
 
     async findById(id: string): Promise<Merchant | null> {
-        return this.merchantRepo.findOne({ where: { id } });
+        return await this.merchantRepo.findOne({ where: { id } });
     }
 
     async findAll(): Promise<Merchant[]> {
-        return this.merchantRepo.find();
+        return await this.merchantRepo.find();
     }
 }
