@@ -11,7 +11,7 @@ import { Merchant } from '../src/entities/merchant.entity';
 import { Transaction } from '../src/entities/transaction.entity';
 import { TransactionStatus } from '../src/enums/transaction.status';
 
-describe('PayoutService', () => {
+describe('PayoutService-TestSuite', () => {
     let payoutService: PayoutService;
     let payoutRepo: jest.Mocked<IPayoutRepository>;
     let merchantRepo: jest.Mocked<IMerchantRepository>;
