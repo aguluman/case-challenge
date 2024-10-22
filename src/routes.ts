@@ -90,7 +90,7 @@ router.post('/transactions/virtual-account', async (req, res) => {
 
 /**
  * @swagger
- * api/transactions/settle-card:
+ * /api/transactions/settle-card:
  *   post:
  *     summary: Settle a card transaction
  *     tags: [Transactions]
@@ -99,7 +99,15 @@ router.post('/transactions/virtual-account', async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/SettleCardTransactionDTO'
+ *             type: object
+ *             properties:
+ *               reference:
+ *                 type: string
+ *                 description: The reference of the transaction
+ *                 example: "7AB3-6a9g-z9yd-qt6-822"
+ *               cardNumber:
+ *                 type: string
+ *                 description: The last four digits of the card number
  *     responses:
  *       200:
  *         description: Transaction settled successfully

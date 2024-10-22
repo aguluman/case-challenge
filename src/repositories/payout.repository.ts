@@ -18,14 +18,14 @@ export class PayoutRepository implements IPayoutRepository {
     findOnePayoutForOneMerchant(payoutId: string,  merchantId: string): Promise<Payout | null> {
         return this.payoutRepo.findOne({
             where: { id: payoutId, merchant_id: merchantId },
-            relations: ['card_transactions', 'virtual_account_transactions'],
+            relations: ["transactions"],
         });
     }
 
     findAllPayoutForOneMerchants(merchantId: string): Promise<Payout[]> {
         return this.payoutRepo.find({
             where: { merchant_id: merchantId },
-            relations: ['card_transactions', 'virtual_account_transactions'],
+            relations: ['transactions'],
         });
     }
 }

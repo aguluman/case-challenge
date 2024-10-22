@@ -2,23 +2,29 @@ import { inject, injectable } from 'tsyringe';
 import { Repository } from 'typeorm';
 import { CardTransaction } from '../entities/card-transaction.entity';
 import { VirtualAccountTransaction } from '../entities/virtual-account-transaction.entity';
+import { Transaction } from '../entities/transaction.entity';
 import { TransactionStatus } from '../enums/transaction.status';
 import { ITransactionRepository } from './irepository/itransaction.repository';
 import { Payout } from '../entities/payouts.entity';
-
+import { BaseTransactionRepository } from './base.transaction.repository';
 @injectable()
-export class TransactionRepository implements ITransactionRepository {
+export class TransactionRepository extends BaseTransactionRepository implements ITransactionRepository {
     constructor(
         @inject('CardTransactionRepository')
         private readonly cardTransactionRepo: Repository<CardTransaction>,
         @inject('VirtualAccountTransactionRepository')
         private readonly virtualAccountRepo: Repository<VirtualAccountTransaction>,
-    ) {}
+        @inject('CoreTransactionRepository')
+            transactionRepo: Repository<Transaction>,
+    ) {
+        super(transactionRepo);
+    }
 
     async createCardTransaction(
         data: Partial<CardTransaction>,
     ): Promise<CardTransaction> {
         const transaction = this.cardTransactionRepo.create(data);
+        await this.saveTransaction(transaction);
         return this.cardTransactionRepo.save(transaction);
     }
 
@@ -26,6 +32,7 @@ export class TransactionRepository implements ITransactionRepository {
         data: Partial<VirtualAccountTransaction>,
     ): Promise<VirtualAccountTransaction> {
         const transaction = this.virtualAccountRepo.create(data);
+        await this.saveTransaction(transaction);
         return this.virtualAccountRepo.save(transaction);
     }
 
@@ -39,6 +46,7 @@ export class TransactionRepository implements ITransactionRepository {
         });
         if (transaction) {
             transaction.status = TransactionStatus.SUCCESS;
+            await this.saveTransaction(transaction); // Save to base transaction table
             return this.cardTransactionRepo.save(transaction);
         }
         throw new Error('Transaction not found');
@@ -61,6 +69,7 @@ export class TransactionRepository implements ITransactionRepository {
                 transaction.payout = new Payout(); // Initialize the payout property if undefined
             }
             transaction.payout.id = payoutId;
+            await this.saveTransaction(transaction); // Save to base transaction table
             await this.cardTransactionRepo.save(transaction);
         }
     }

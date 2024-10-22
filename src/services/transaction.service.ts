@@ -86,6 +86,12 @@ export class TransactionService implements ITransactionService {
         } = data;
         const fee = value * 0.05;
 
+        // Fetch the Merchant entity
+        const merchant = await this.merchantRepo.findMerchantId( merchant_id );
+        if (!merchant) {
+            throw new Error('Merchant not found');
+        }
+
         const transaction =
             await this.transactionRepo.createVirtualAccountTransaction({
                 ...otherDetails,
@@ -98,6 +104,7 @@ export class TransactionService implements ITransactionService {
                 fee,
                 currency: currency,
                 merchant_id,
+                merchant,
                 transaction_type: transactionType,
                 reference: generateUniqueReference(),
             });

@@ -58,7 +58,7 @@ export class PayoutService implements IPayoutService {
             merchantId: merchant_id,
             totalAmount: totalPayoutAmount - totalFee,
             settledTransactions: settledTransactions.length,
-            feeDeducted: totalFee,
+            feesDeducted: totalFee,
             payoutDate: payout.created_at,
         };
     }
@@ -69,7 +69,7 @@ export class PayoutService implements IPayoutService {
         return payouts.map((payout) => {
             const settledTransactions = payout.transactions.length;
 
-            const feeDeducted = payout.transactions.reduce(
+            const feesDeducted = payout.transactions.reduce(
                 (total, transaction) => total + transaction.fee,
                 0,
             );
@@ -77,8 +77,8 @@ export class PayoutService implements IPayoutService {
             return {
                 merchantId: payout.merchant_id,
                 totalAmount: payout.payout_amount,
-                settledTransactions,
-                feeDeducted,
+                settledTransactions: payout.transactions.length,
+                feesDeducted,
                 payoutDate: payout.created_at,
             };
         });
