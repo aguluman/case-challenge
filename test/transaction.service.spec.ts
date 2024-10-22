@@ -1,4 +1,4 @@
-//Unit Test for TransactionService
+//Test for TransactionService
 import 'reflect-metadata';
 import { TransactionService } from '../src/services/transaction.service';
 import { ITransactionRepository } from '../src/repositories/irepository/itransaction.repository';

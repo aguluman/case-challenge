@@ -1,4 +1,4 @@
-//Unit Test for PayoutService
+//Test for PayoutService
 import 'reflect-metadata';
 import { PayoutService } from '../src/services/payout.service';
 import { IMerchantRepository } from '../src/repositories/irepository/imerchant.repository';
