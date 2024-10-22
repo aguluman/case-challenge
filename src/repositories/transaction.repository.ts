@@ -7,6 +7,7 @@ import { TransactionStatus } from '../enums/transaction.status';
 import { ITransactionRepository } from './irepository/itransaction.repository';
 import { Payout } from '../entities/payouts.entity';
 import { BaseTransactionRepository } from './base.transaction.repository';
+
 @injectable()
 export class TransactionRepository extends BaseTransactionRepository implements ITransactionRepository {
     constructor(
@@ -54,41 +55,59 @@ export class TransactionRepository extends BaseTransactionRepository implements 
 
     async findSettledTransactionsByMerchant(
         merchant_id: string,
-    ): Promise<CardTransaction[]> {
-        return await this.cardTransactionRepo.find({
+    ): Promise<Transaction[]> {
+        const cardTransactions = await this.cardTransactionRepo.find({
             where: { merchant_id, status: TransactionStatus.SUCCESS },
         });
+
+        const virtualAccountTransactions = await this.virtualAccountRepo.find({
+            where: { merchant_id, status: TransactionStatus.SUCCESS },
+        });
+
+        return [...cardTransactions, ...virtualAccountTransactions];
     }
 
     async updateTransactionsWithPayout(
-        transactions: CardTransaction[],
+        transactions: Transaction[],
         payoutId: string,
     ): Promise<void> {
         for (const transaction of transactions) {
             if (!transaction.payout) {
-                transaction.payout = new Payout(); // Initialize the payout property if undefined
+                transaction.payout = new Payout();
             }
             transaction.payout.id = payoutId;
-            await this.saveTransaction(transaction); // Save to base transaction table
-            await this.cardTransactionRepo.save(transaction);
+            await this.saveTransaction(transaction);
+
+            if (transaction instanceof CardTransaction) {
+                await this.cardTransactionRepo.save(transaction);
+            } else if (transaction instanceof VirtualAccountTransaction) {
+                await this.virtualAccountRepo.save(transaction);
+            }
         }
     }
 
     async getMerchantBalance(
         merchant_id: string,
     ): Promise<{ availableBalance: number; pendingSettlementBalance: number }> {
-        const transactions = await this.cardTransactionRepo.find({
+        const cardTransactions = await this.cardTransactionRepo.find({
+            where: { merchant_id },
+        });
+
+        const virtualAccountTransactions = await this.virtualAccountRepo.find({
             where: { merchant_id },
         });
 
         let availableBalance = 0;
         let pendingSettlementBalance = 0;
 
-        for (const transaction of transactions) {
+        const allTransactions = [...cardTransactions, ...virtualAccountTransactions];
+
+        for (const transaction of allTransactions) {
+            const transactionValue = Number(transaction.transaction_value);
             if (transaction.status === TransactionStatus.SUCCESS) {
-                availableBalance += transaction.transaction_value;
+                availableBalance += transactionValue;
             } else if (transaction.status === TransactionStatus.PENDING) {
-                pendingSettlementBalance += transaction.transaction_value;
+                pendingSettlementBalance += transactionValue;
             }
         }
 

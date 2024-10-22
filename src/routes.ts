@@ -108,6 +108,7 @@ router.post('/transactions/virtual-account', async (req, res) => {
  *               cardNumber:
  *                 type: string
  *                 description: The last four digits of the card number
+ *                 example: "1234"
  *     responses:
  *       200:
  *         description: Transaction settled successfully

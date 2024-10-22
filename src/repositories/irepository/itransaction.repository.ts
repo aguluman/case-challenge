@@ -1,5 +1,6 @@
 import { VirtualAccountTransaction } from 'src/entities/virtual-account-transaction.entity';
 import { CardTransaction } from '../../entities/card-transaction.entity';
+import { Transaction } from '../../entities/transaction.entity';
 
 export interface ITransactionRepository {
     createCardTransaction(data: Partial<CardTransaction>): Promise<CardTransaction>;
@@ -12,9 +13,9 @@ export interface ITransactionRepository {
 
     listAllVirtualAccountTransactions(): Promise<VirtualAccountTransaction[]>;
 
-    findSettledTransactionsByMerchant(merchantId: string): Promise<CardTransaction[]>;
+    findSettledTransactionsByMerchant(merchant_id: string): Promise<Transaction[]>;
 
-    updateTransactionsWithPayout(transactions: CardTransaction[], payoutId: string): Promise<void>;
+    updateTransactionsWithPayout(transactions: Transaction[], payoutId: string): Promise<void>;
 
     getMerchantBalance(merchantId: string): Promise<{ availableBalance: number; pendingSettlementBalance: number; }>;
 }
