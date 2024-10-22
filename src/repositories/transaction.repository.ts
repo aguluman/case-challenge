@@ -4,6 +4,7 @@ import { CardTransaction } from '../entities/card-transaction.entity';
 import { VirtualAccountTransaction } from '../entities/virtual-account-transaction.entity';
 import { TransactionStatus } from '../enums/transaction.status';
 import { ITransactionRepository } from './irepository/itransaction.repository';
+import { Payout } from '../entities/payouts.entity';
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
@@ -56,6 +57,9 @@ export class TransactionRepository implements ITransactionRepository {
         payoutId: string,
     ): Promise<void> {
         for (const transaction of transactions) {
+            if (!transaction.payout) {
+                transaction.payout = new Payout(); // Initialize the payout property if undefined
+            }
             transaction.payout.id = payoutId;
             await this.cardTransactionRepo.save(transaction);
         }

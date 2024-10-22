@@ -16,12 +16,17 @@ export class PayoutService implements IPayoutService {
         private readonly merchantRepo: IMerchantRepository,
         @inject('TransactionRepository')
         private readonly transactionRepo: ITransactionRepository,
-    ) {}
+    ) {
+        console.log('PayoutRepo:', this.payoutRepo);
+        console.log('MerchantRepo:', this.merchantRepo);
+        console.log('TransactionRepo:', this.transactionRepo);
+    }
 
     async createPayout(data: PayoutRequestDTO): Promise<PayoutResponseDto> {
         const { merchant_id } = data;
-        const merchant = await this.merchantRepo.findById(merchant_id);
 
+        // Fetch the Merchant entity
+        const merchant = await this.merchantRepo.findMerchantId(merchant_id);
         if (!merchant) {
             throw new Error('Merchant not found');
         }
@@ -39,20 +44,21 @@ export class PayoutService implements IPayoutService {
             0,
         );
 
-        const payout = this.payoutRepo.create({
+        const payout = await this.payoutRepo.createPayout({
             merchant_id: merchant_id,
             payout_amount: totalPayoutAmount - totalFee,
             payout_reference: generateUniqueReference(),
+            transactions: settledTransactions,
+            merchant: merchant,
         });
 
-        await this.payoutRepo.save(payout);
         await this.transactionRepo.updateTransactionsWithPayout(
             settledTransactions,
             payout.id,
         );
 
         return {
-            merchantId: merchant.id,
+            merchantId: merchant_id,
             totalAmount: totalPayoutAmount - totalFee,
             settledTransactions: settledTransactions.length,
             feeDeducted: totalFee,
@@ -61,9 +67,7 @@ export class PayoutService implements IPayoutService {
     }
 
     async listPayouts(merchantId: string): Promise<PayoutResponseDto[]> {
-        const payouts = await this.payoutRepo.findAll({
-            where: { merchant_id: merchantId },
-        });
+        const payouts = await this.payoutRepo.findAllPayoutForOneMerchants(merchantId);
 
         return payouts.map((payout) => {
             const settledTransactions = payout.transactions.length;

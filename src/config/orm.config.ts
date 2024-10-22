@@ -16,13 +16,15 @@ export const HabariDataSource = new DataSource({
     database: process.env.DB_NAME,
     entities: [CardTransaction, VirtualAccountTransaction, Merchant, Payout, Transaction],
     migrations: ['dist/src/migrations/*.js'],
-    synchronize: true, // For dev: true, //For production: false
+    synchronize: true,
 });
 
-HabariDataSource.initialize()
-    .then(() => {
-        console.log('Data Source has been initialized!');
-    })
-    .catch((err) => {
-        console.error('Error during Data Source initialization:', err);
-    });
+export async function initializeDB(): Promise<void> {
+    HabariDataSource.initialize()
+        .then(() => {
+            console.log('Data Source has been initialized!');
+        })
+        .catch((err) => {
+            console.error('Error during Data Source initialization:', err);
+        });
+}

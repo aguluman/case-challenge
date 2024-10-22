@@ -1,12 +1,9 @@
 import { Payout } from '../../entities/payouts.entity';
 
-
 export interface IPayoutRepository {
-    create(data: Partial<Payout>): Payout;
+    createPayout(data: Partial<Payout>): Promise<Payout>;
 
-    save(payout: Payout): Promise<Payout>;
+    findOnePayoutForOneMerchant(payoutId: string,  merchantId: string): Promise<Payout | null>;
 
-    findOne(options: any): Promise<Payout | null>;
-
-    findAll(options: any): Promise<Payout[]>;
+    findAllPayoutForOneMerchants(merchantId: string): Promise<Payout[]>;
 }

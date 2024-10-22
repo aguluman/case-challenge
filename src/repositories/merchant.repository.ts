@@ -6,15 +6,15 @@ import { IMerchantRepository } from './irepository/imerchant.repository';
 @injectable()
 export class MerchantRepository implements IMerchantRepository {
     constructor(
-        @inject('MerchantRepository')
+        @inject('TypeORMMerchantRepository')
         private readonly merchantRepo: Repository<Merchant>,
     ) {}
 
-    async findById(id: string): Promise<Merchant | null> {
-        return await this.merchantRepo.findOne({ where: { id } });
+    findMerchantId(id: string): Promise<Merchant | null> {
+        return this.merchantRepo.findOne({ where: { id } });
     }
 
-    async findAll(): Promise<Merchant[]> {
-        return await this.merchantRepo.find();
+    findAll(): Promise<Merchant[]> {
+        return this.merchantRepo.find();
     }
 }

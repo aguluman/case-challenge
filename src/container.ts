@@ -36,15 +36,15 @@ container.register<ITransactionService>('TransactionService', {
 });
 
 // Register TypeORM repositories
-container.register<Repository<Payout>>('PayoutRepository', {
-  useFactory: (c) => HabariDataSource.getRepository(Payout),
+container.register<Repository<Payout>>('TypeORMPayoutRepository', {
+    useFactory: (_) => HabariDataSource.getRepository(Payout),
 });
-container.register<Repository<Merchant>>('MerchantRepository', {
-  useFactory: (c) => HabariDataSource.getRepository(Merchant),
+container.register<Repository<Merchant>>('TypeORMMerchantRepository', {
+    useFactory: (_) => HabariDataSource.getRepository(Merchant),
 });
 container.register<Repository<CardTransaction>>('CardTransactionRepository', {
-  useFactory: (c) => HabariDataSource.getRepository(CardTransaction),
+    useFactory: (_) => HabariDataSource.getRepository(CardTransaction),
 });
 container.register<Repository<VirtualAccountTransaction>>('VirtualAccountTransactionRepository', {
-  useFactory: (c) => HabariDataSource.getRepository(VirtualAccountTransaction),
+    useFactory: (_) => HabariDataSource.getRepository(VirtualAccountTransaction),
 });

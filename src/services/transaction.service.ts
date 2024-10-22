@@ -7,11 +7,13 @@ import { ITransactionRepository } from '../repositories/irepository/itransaction
 import { ITransactionService } from './iservice/itransaction.service';
 import { generateUniqueReference } from '../utils/generate-unique-reference';
 import { TransactionStatus } from '../enums/transaction.status';
+import { IMerchantRepository } from 'src/repositories/irepository/imerchant.repository';
 
 @injectable()
 export class TransactionService implements ITransactionService {
     constructor(
         @inject('TransactionRepository') private readonly transactionRepo: ITransactionRepository,
+        @inject('MerchantRepository') private readonly merchantRepo: IMerchantRepository,
     ) {
     }
 
@@ -31,6 +33,12 @@ export class TransactionService implements ITransactionService {
         const lastFourDigits = cardNumber.slice(-4);
         const fee = value * 0.03;
 
+        // Fetch the Merchant entity
+        const merchant = await this.merchantRepo.findMerchantId( merchant_id );
+        if (!merchant) {
+            throw new Error('Merchant not found');
+        }
+
         const transaction = await this.transactionRepo.createCardTransaction({
             ...otherDetails,
             transaction_value: value,
@@ -43,6 +51,7 @@ export class TransactionService implements ITransactionService {
             status: TransactionStatus.PENDING, // Set as pending,
             fee,
             merchant_id,
+            merchant,
             transaction_type: transactionType,
             reference: generateUniqueReference(),
         });
