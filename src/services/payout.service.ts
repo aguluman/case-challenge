@@ -17,9 +17,6 @@ export class PayoutService implements IPayoutService {
         @inject('TransactionRepository')
         private readonly transactionRepo: ITransactionRepository,
     ) {
-        console.log('PayoutRepo:', this.payoutRepo);
-        console.log('MerchantRepo:', this.merchantRepo);
-        console.log('TransactionRepo:', this.transactionRepo);
     }
 
     async createPayout(data: PayoutRequestDTO): Promise<PayoutResponseDto> {
