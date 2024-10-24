@@ -1,3 +1,5 @@
+import { TransactionType } from '../../enums/transaction.type';
+
 export class CreateCardTransactionDTO {
     value: number;
     description: string;
@@ -7,5 +9,5 @@ export class CreateCardTransactionDTO {
     cvv: string;
     currency: string;
     merchant_id: string;
-    transactionType: string = 'card'; // Default transaction type
+    transactionType: TransactionType.Card; // Default transaction type
 }

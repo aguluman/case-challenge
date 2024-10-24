@@ -29,7 +29,7 @@ export class PayoutService implements IPayoutService {
         }
 
         const settledTransactions =
-            await this.transactionRepo.findSettledTransactionsByMerchant(
+            await this.transactionRepo.findSettledTransactions(
                 merchant_id,
             );
         const totalPayoutAmount = settledTransactions.reduce(
@@ -90,5 +90,6 @@ export class PayoutService implements IPayoutService {
         const { availableBalance, pendingSettlementBalance } =
             await this.transactionRepo.getMerchantBalance(merchantId);
         return { availableBalance, pendingSettlementBalance };
-    }
+    } // This value should be saved to the DB,
+      // And it should be used to calculate the available balance or pending balance of the merchant
 }

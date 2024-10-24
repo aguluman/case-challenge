@@ -8,6 +8,7 @@ import { ITransactionService } from './iservice/itransaction.service';
 import { generateUniqueReference } from '../utils/generate-unique-reference';
 import { TransactionStatus } from '../enums/transaction.status';
 import { IMerchantRepository } from 'src/repositories/irepository/imerchant.repository';
+import { TransactionType } from '../enums/transaction.type';
 
 @injectable()
 export class TransactionService implements ITransactionService {
@@ -27,14 +28,13 @@ export class TransactionService implements ITransactionService {
             cvv,
             currency,
             merchant_id,
-            transactionType,
             ...otherDetails
         } = data;
         const lastFourDigits = cardNumber.slice(-4);
         const fee = value * 0.03;
 
         // Fetch the Merchant entity
-        const merchant = await this.merchantRepo.findMerchantId( merchant_id );
+        const merchant = await this.merchantRepo.findMerchantId(merchant_id);
         if (!merchant) {
             throw new Error('Merchant not found');
         }
@@ -52,7 +52,7 @@ export class TransactionService implements ITransactionService {
             fee,
             merchant_id,
             merchant,
-            transaction_type: transactionType,
+            transaction_type: TransactionType.Card,
             reference: generateUniqueReference(),
         });
         return {
@@ -68,7 +68,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: transaction.transaction_type,
+            transactionType: TransactionType.Card,
         };
     }
 
@@ -81,33 +81,31 @@ export class TransactionService implements ITransactionService {
             bankCode,
             currency,
             merchant_id,
-            transactionType,
             ...otherDetails
         } = data;
         const fee = value * 0.05;
 
         // Fetch the Merchant entity
-        const merchant = await this.merchantRepo.findMerchantId( merchant_id );
+        const merchant = await this.merchantRepo.findMerchantId(merchant_id);
         if (!merchant) {
             throw new Error('Merchant not found');
         }
 
-        const transaction =
-            await this.transactionRepo.createVirtualAccountTransaction({
-                ...otherDetails,
-                transaction_value: value,
-                transaction_desc: description,
-                account_name: accountName,
-                account_number: accountNumber,
-                bank_code: bankCode,
-                status: TransactionStatus.SUCCESS, // Set as success,
-                fee,
-                currency: currency,
-                merchant_id,
-                merchant,
-                transaction_type: transactionType,
-                reference: generateUniqueReference(),
-            });
+        const transaction = await this.transactionRepo.createVirtualAccountTransaction({
+            ...otherDetails,
+            transaction_value: value,
+            transaction_desc: description,
+            account_name: accountName,
+            account_number: accountNumber,
+            bank_code: bankCode,
+            status: TransactionStatus.SUCCESS, // Set as success,
+            fee,
+            currency: currency,
+            merchant_id,
+            merchant,
+            transaction_type: TransactionType.VirtualAccount,
+            reference: generateUniqueReference(),
+        });
 
         return {
             id: transaction.id,
@@ -122,7 +120,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: transaction.transaction_type,
+            transactionType: TransactionType.VirtualAccount,
         };
     }
 
@@ -142,7 +140,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: transaction.transaction_type,
+            transactionType: TransactionType.Card,
         };
     }
 
@@ -162,7 +160,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: transaction.transaction_type,
+            transactionType: TransactionType.Card,
         }));
     }
 
@@ -182,7 +180,7 @@ export class TransactionService implements ITransactionService {
             reference: transaction.reference,
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: transaction.transaction_type,
+            transactionType: TransactionType.VirtualAccount,
         }));
     }
 }

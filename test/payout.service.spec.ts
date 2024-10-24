@@ -10,6 +10,7 @@ import { Payout } from '../src/entities/payouts.entity';
 import { Merchant } from '../src/entities/merchant.entity';
 import { Transaction } from '../src/entities/transaction.entity';
 import { TransactionStatus } from '../src/enums/transaction.status';
+import { TransactionType } from '../src/enums/transaction.type';
 
 describe('PayoutService-TestSuite', () => {
     let payoutService: PayoutService;
@@ -28,7 +29,7 @@ describe('PayoutService-TestSuite', () => {
         } as any;
 
         transactionRepo = {
-            findSettledTransactionsByMerchant: jest.fn(),
+            findSettledTransactions: jest.fn(),
             updateTransactionsWithPayout: jest.fn(),
             getMerchantBalance: jest.fn(),
         } as any;
@@ -63,7 +64,7 @@ describe('PayoutService-TestSuite', () => {
                 reference: '1234-asdf-1234-z3r',
                 merchant: merchant,
                 payout: null,
-                transaction_type: 'card',
+                transaction_type: TransactionType.Card,
             },
             {
                 id: '198264a7-5507-42dc-911e-5b7fbb299de7',
@@ -78,7 +79,7 @@ describe('PayoutService-TestSuite', () => {
                 reference: '1234-asdf-1234-z3r',
                 merchant: merchant,
                 payout: null,
-                transaction_type: 'virtual_account',
+                transaction_type: TransactionType.VirtualAccount,
             },
         ];
         const payout: Payout = {
@@ -93,7 +94,7 @@ describe('PayoutService-TestSuite', () => {
         };
 
         merchantRepo.findMerchantId.mockResolvedValue(merchant);
-        transactionRepo.findSettledTransactionsByMerchant.mockResolvedValue(transactions);
+        transactionRepo.findSettledTransactions.mockResolvedValue(transactions);
         payoutRepo.createPayout.mockResolvedValue(payout);
 
         const result: PayoutResponseDto = await payoutService.createPayout(payoutRequest);
@@ -106,7 +107,7 @@ describe('PayoutService-TestSuite', () => {
             payoutDate: payout.created_at,
         });
         expect(merchantRepo.findMerchantId).toHaveBeenCalledWith('123');
-        expect(transactionRepo.findSettledTransactionsByMerchant).toHaveBeenCalledWith('123');
+        expect(transactionRepo.findSettledTransactions).toHaveBeenCalledWith('123');
         expect(payoutRepo.createPayout).toHaveBeenCalled();
         expect(transactionRepo.updateTransactionsWithPayout).toHaveBeenCalledWith(transactions, '3a40a1bf-abaf-4d2b-a8b6-be7a40ca753c');
     });
@@ -143,7 +144,7 @@ describe('PayoutService-TestSuite', () => {
                             payouts: [],
                         },
                         payout: null,
-                        transaction_type: 'card',
+                        transaction_type: TransactionType.Card,
                     },
                     {
                         id: '198264a7-5507-42dc-911e-5b7fbb299de7',
@@ -168,7 +169,7 @@ describe('PayoutService-TestSuite', () => {
                             payouts: [],
                         },
                         payout: null,
-                        transaction_type: 'virtual_account',
+                        transaction_type: TransactionType.VirtualAccount,
                     },
                 ],
                 created_at: new Date(),

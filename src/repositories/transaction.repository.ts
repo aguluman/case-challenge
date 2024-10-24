@@ -1,68 +1,62 @@
 import { inject, injectable } from 'tsyringe';
 import { Repository } from 'typeorm';
-import { CardTransaction } from '../entities/card-transaction.entity';
-import { VirtualAccountTransaction } from '../entities/virtual-account-transaction.entity';
 import { Transaction } from '../entities/transaction.entity';
 import { TransactionStatus } from '../enums/transaction.status';
 import { ITransactionRepository } from './irepository/itransaction.repository';
 import { Payout } from '../entities/payouts.entity';
-import { BaseTransactionRepository } from './base.transaction.repository';
 
 @injectable()
-export class TransactionRepository extends BaseTransactionRepository implements ITransactionRepository {
+export class TransactionRepository implements ITransactionRepository {
     constructor(
         @inject('CardTransactionRepository')
-        private readonly cardTransactionRepo: Repository<CardTransaction>,
+        private readonly cardTransactionRepo: Repository<Transaction>,
         @inject('VirtualAccountTransactionRepository')
-        private readonly virtualAccountRepo: Repository<VirtualAccountTransaction>,
-        @inject('CoreTransactionRepository')
-            transactionRepo: Repository<Transaction>,
+        private readonly virtualAccountRepo: Repository<Transaction>,
+        @inject('UpdateTransactionRepository')
+        private readonly updateTransactionRepo: Repository<Transaction>,
     ) {
-        super(transactionRepo);
     }
 
     async createCardTransaction(
-        data: Partial<CardTransaction>,
-    ): Promise<CardTransaction> {
+        data: Partial<Transaction>,
+    ): Promise<Transaction> {
         const transaction = this.cardTransactionRepo.create(data);
-        await this.saveTransaction(transaction);
         return this.cardTransactionRepo.save(transaction);
     }
 
     async createVirtualAccountTransaction(
-        data: Partial<VirtualAccountTransaction>,
-    ): Promise<VirtualAccountTransaction> {
+        data: Partial<Transaction>,
+    ): Promise<Transaction> {
         const transaction = this.virtualAccountRepo.create(data);
-        await this.saveTransaction(transaction);
         return this.virtualAccountRepo.save(transaction);
     }
 
     async settleCardTransaction(
         reference: string,
         cardNumber: string,
-    ): Promise<CardTransaction> {
+    ): Promise<Transaction> {
         const transaction = await this.cardTransactionRepo.findOneBy({
             reference,
             card_number_last4: cardNumber,
         });
         if (transaction) {
             transaction.status = TransactionStatus.SUCCESS;
-            await this.saveTransaction(transaction); // Save to base transaction table
             return this.cardTransactionRepo.save(transaction);
         }
         throw new Error('Transaction not found');
     }
 
-    async findSettledTransactionsByMerchant(
+    async findSettledTransactions(
         merchant_id: string,
     ): Promise<Transaction[]> {
-        const cardTransactions = await this.cardTransactionRepo.find({
-            where: { merchant_id, status: TransactionStatus.SUCCESS },
-        });
-
-        const virtualAccountTransactions = await this.virtualAccountRepo.find({
-            where: { merchant_id, status: TransactionStatus.SUCCESS },
-        });
+        const [cardTransactions, virtualAccountTransactions] = await Promise.all([
+            this.cardTransactionRepo.find({
+                where: { merchant_id, status: TransactionStatus.SUCCESS },
+            }),
+            this.virtualAccountRepo.find({
+                where: { merchant_id, status: TransactionStatus.SUCCESS },
+            }),
+        ]);
 
         return [...cardTransactions, ...virtualAccountTransactions];
     }
@@ -76,13 +70,7 @@ export class TransactionRepository extends BaseTransactionRepository implements 
                 transaction.payout = new Payout();
             }
             transaction.payout.id = payoutId;
-            await this.saveTransaction(transaction);
-
-            if (transaction instanceof CardTransaction) {
-                await this.cardTransactionRepo.save(transaction);
-            } else if (transaction instanceof VirtualAccountTransaction) {
-                await this.virtualAccountRepo.save(transaction);
-            }
+            await this.updateTransactionRepo.save(transaction);
         }
     }
 
@@ -111,14 +99,14 @@ export class TransactionRepository extends BaseTransactionRepository implements 
             }
         }
 
-        return { availableBalance, pendingSettlementBalance };
+        return { availableBalance, pendingSettlementBalance }; //create a db entity for merchant balance.
     }
 
-    async listAllCardTransactions(): Promise<CardTransaction[]> {
+    async listAllCardTransactions(): Promise<Transaction[]> {
         return this.cardTransactionRepo.find();
     }
 
-    async listAllVirtualAccountTransactions(): Promise<VirtualAccountTransaction[]> {
+    async listAllVirtualAccountTransactions(): Promise<Transaction[]> {
         return this.virtualAccountRepo.find();
     }
 }

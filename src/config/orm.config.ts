@@ -1,7 +1,5 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
-import { CardTransaction } from '../entities/card-transaction.entity';
-import { VirtualAccountTransaction } from '../entities/virtual-account-transaction.entity';
 import { Merchant } from '../entities/merchant.entity';
 import { Transaction } from '../entities/transaction.entity';
 import { Payout } from '../entities/payouts.entity';
@@ -14,7 +12,7 @@ export const HabariDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [CardTransaction, VirtualAccountTransaction, Merchant, Payout, Transaction],
+    entities: [Merchant, Payout, Transaction],
     migrations: ['dist/src/migrations/*.js'],
     synchronize: true,
 });

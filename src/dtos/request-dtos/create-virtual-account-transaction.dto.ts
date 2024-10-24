@@ -1,3 +1,5 @@
+import { TransactionType } from '../../enums/transaction.type';
+
 export class CreateVirtualAccountTransactionDTO {
     value: number;
     description: string;
@@ -6,5 +8,5 @@ export class CreateVirtualAccountTransactionDTO {
     bankCode: string;
     currency: string;
     merchant_id: string;
-    transactionType: string = 'virtual_account'; // Default transaction type
+    transactionType: TransactionType.VirtualAccount; // Default transaction type
 }

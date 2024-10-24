@@ -11,8 +11,8 @@ import {
 } from '../src/dtos/response-dtos/virtual-account-transaction.response.dto';
 import { Merchant } from '../src/entities/merchant.entity';
 import { TransactionStatus } from '../src/enums/transaction.status';
-import { CardTransaction } from '../src/entities/card-transaction.entity';
-import { VirtualAccountTransaction } from '../src/entities/virtual-account-transaction.entity';
+import { TransactionType } from '../src/enums/transaction.type';
+import { Transaction } from '../src/entities/transaction.entity';
 
 
 jest.mock('../src/utils/generate-unique-reference', () => ({
@@ -50,7 +50,7 @@ describe('TransactionService-TestSuite', () => {
             cvv: '123',
             currency: 'NGN',
             merchant_id: 'merchant123',
-            transactionType: 'card',
+            transactionType: TransactionType.Card,
         };
         const merchant: Merchant = {
             id: 'merchant123',
@@ -63,7 +63,7 @@ describe('TransactionService-TestSuite', () => {
             transactions: [],
             payouts: [],
         };
-        const transaction: CardTransaction = {
+        const transaction: Transaction = {
             id: 'transaction123',
             transaction_value: 100,
             fee: 3,
@@ -80,7 +80,7 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             merchant: merchant,
             payout: null,
-            transaction_type: 'card',
+            transaction_type: TransactionType.Card,
         };
 
         merchantRepo.findMerchantId.mockResolvedValue(merchant);
@@ -101,7 +101,7 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'card',
+            transactionType: TransactionType.Card,
         });
         expect(merchantRepo.findMerchantId).toHaveBeenCalledWith('merchant123');
         expect(transactionRepo.createCardTransaction).toHaveBeenCalledWith(expect.objectContaining({
@@ -115,7 +115,7 @@ describe('TransactionService-TestSuite', () => {
             fee: 3,
             merchant_id: 'merchant123',
             reference: 'ref123',
-            transaction_type: 'card',
+            transaction_type: TransactionType.Card,
         }));
     });
 
@@ -128,7 +128,7 @@ describe('TransactionService-TestSuite', () => {
             bankCode: '001',
             currency: 'NGN',
             merchant_id: 'merchant123',
-            transactionType: 'virtual_account',
+            transactionType: TransactionType.VirtualAccount,
         };
         const merchant: Merchant = {
             id: 'merchant123',
@@ -141,7 +141,7 @@ describe('TransactionService-TestSuite', () => {
             transactions: [],
             payouts: [],
         };
-        const transaction: VirtualAccountTransaction = {
+        const transaction: Transaction = {
             id: 'transaction123',
             transaction_value: 200,
             fee: 10,
@@ -157,7 +157,7 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             merchant: merchant,
             payout: null,
-            transaction_type: 'virtual_account',
+            transaction_type: TransactionType.VirtualAccount,
         };
 
         merchantRepo.findMerchantId.mockResolvedValue(merchant);
@@ -178,7 +178,7 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'virtual_account',
+            transactionType: TransactionType.VirtualAccount,
         });
         expect(merchantRepo.findMerchantId).toHaveBeenCalledWith('merchant123');
         expect(transactionRepo.createVirtualAccountTransaction).toHaveBeenCalledWith(expect.objectContaining({
@@ -192,7 +192,7 @@ describe('TransactionService-TestSuite', () => {
             fee: 10,
             merchant_id: 'merchant123',
             reference: 'ref123',
-            transaction_type: 'virtual_account',
+            transaction_type: TransactionType.VirtualAccount,
         }));
     });
 
@@ -200,7 +200,7 @@ describe('TransactionService-TestSuite', () => {
     it('should settle a card transaction', async () => {
         const reference = 'ref123';
         const cardNumber = '1234';
-        const transaction: CardTransaction = {
+        const transaction: Transaction = {
             id: 'transaction123',
             transaction_value: 100,
             fee: 3,
@@ -217,7 +217,7 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             merchant: null,
             payout: null,
-            transaction_type: 'card',
+            transaction_type: TransactionType.Card,
         };
 
         transactionRepo.settleCardTransaction.mockResolvedValue(transaction);
@@ -237,13 +237,13 @@ describe('TransactionService-TestSuite', () => {
             reference: 'ref123',
             createdAt: transaction.created_at,
             updatedAt: transaction.updated_at,
-            transactionType: 'card',
+            transactionType: TransactionType.Card,
         });
         expect(transactionRepo.settleCardTransaction).toHaveBeenCalledWith(reference, cardNumber);
     });
 
     it('should list all card transactions', async () => {
-        const transactions: CardTransaction[] = [
+        const transactions: Transaction[] = [
             {
                 id: 'transaction123',
                 transaction_value: 100,
@@ -261,7 +261,7 @@ describe('TransactionService-TestSuite', () => {
                 reference: 'ref123',
                 merchant: null,
                 payout: null,
-                transaction_type: 'card',
+                transaction_type: TransactionType.Card,
             },
         ];
 
@@ -288,7 +288,7 @@ describe('TransactionService-TestSuite', () => {
     });
 
     it('should list all virtual account transactions', async () => {
-        const transactions: VirtualAccountTransaction[] = [
+        const transactions: Transaction[] = [
             {
                 id: 'transaction123',
                 transaction_value: 200,
@@ -305,7 +305,7 @@ describe('TransactionService-TestSuite', () => {
                 reference: 'ref123',
                 merchant: null,
                 payout: null,
-                transaction_type: 'virtual_account',
+                transaction_type: TransactionType.VirtualAccount,
             },
         ];
 

@@ -13,9 +13,6 @@ import { ITransactionService } from './services/iservice/itransaction.service';
 import { HabariDataSource } from './config/orm.config';
 import { Payout } from './entities/payouts.entity';
 import { Merchant } from './entities/merchant.entity';
-import { CardTransaction } from './entities/card-transaction.entity';
-import { VirtualAccountTransaction } from './entities/virtual-account-transaction.entity';
-import { BaseTransactionRepository } from './repositories/base.transaction.repository';
 import { Transaction } from './entities/transaction.entity';
 
 // Register repositories
@@ -44,16 +41,12 @@ container.register<Repository<Payout>>('TypeORMPayoutRepository', {
 container.register<Repository<Merchant>>('TypeORMMerchantRepository', {
     useFactory: (_) => HabariDataSource.getRepository(Merchant),
 });
-container.register<Repository<CardTransaction>>('CardTransactionRepository', {
-    useFactory: (_) => HabariDataSource.getRepository(CardTransaction),
-});
-container.register<Repository<VirtualAccountTransaction>>('VirtualAccountTransactionRepository', {
-    useFactory: (_) => HabariDataSource.getRepository(VirtualAccountTransaction),
-});
-container.register<Repository<Transaction>>('CoreTransactionRepository', {
+container.register<Repository<Transaction>>('CardTransactionRepository', {
     useFactory: (_) => HabariDataSource.getRepository(Transaction),
 });
-
-container.register<BaseTransactionRepository>('BaseTransactionRepository', {
-    useFactory: (c) => new BaseTransactionRepository(c.resolve('TransactionRepository')),
+container.register<Repository<Transaction>>('VirtualAccountTransactionRepository', {
+    useFactory: (_) => HabariDataSource.getRepository(Transaction),
+});
+container.register<Repository<Transaction>>('UpdateTransactionRepository', {
+    useFactory: (_) => HabariDataSource.getRepository(Transaction),
 });

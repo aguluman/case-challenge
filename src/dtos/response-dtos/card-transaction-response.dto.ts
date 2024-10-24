@@ -1,3 +1,5 @@
+import { TransactionType } from '../../enums/transaction.type';
+
 export class CardTransactionResponseDTO {
     id: string;
     value: number;
@@ -11,5 +13,5 @@ export class CardTransactionResponseDTO {
     reference: string;
     createdAt: Date;
     updatedAt: Date;
-    transactionType: string = 'card';
+    transactionType: TransactionType.Card;
 }

@@ -1,19 +1,19 @@
-import { VirtualAccountTransaction } from 'src/entities/virtual-account-transaction.entity';
-import { CardTransaction } from '../../entities/card-transaction.entity';
 import { Transaction } from '../../entities/transaction.entity';
 
 export interface ITransactionRepository {
-    createCardTransaction(data: Partial<CardTransaction>): Promise<CardTransaction>;
 
-    createVirtualAccountTransaction(data: Partial<VirtualAccountTransaction>): Promise<VirtualAccountTransaction>;
 
-    settleCardTransaction(reference: string, cardNumber: string): Promise<CardTransaction>;
+    createCardTransaction(data: Partial<Transaction>): Promise<Transaction>;
 
-    listAllCardTransactions(): Promise<CardTransaction[]>;
+    createVirtualAccountTransaction(data: Partial<Transaction>): Promise<Transaction>;
 
-    listAllVirtualAccountTransactions(): Promise<VirtualAccountTransaction[]>;
+    settleCardTransaction(reference: string, cardNumber: string): Promise<Transaction>;
 
-    findSettledTransactionsByMerchant(merchant_id: string): Promise<Transaction[]>;
+    listAllCardTransactions(): Promise<Transaction[]>;
+
+    listAllVirtualAccountTransactions(): Promise<Transaction[]>;
+
+    findSettledTransactions(merchant_id: string): Promise<Transaction[]>;
 
     updateTransactionsWithPayout(transactions: Transaction[], payoutId: string): Promise<void>;
 

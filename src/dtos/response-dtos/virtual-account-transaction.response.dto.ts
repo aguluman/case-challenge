@@ -1,3 +1,5 @@
+import { TransactionType } from '../../enums/transaction.type';
+
 export class VirtualAccountTransactionResponseDTO {
     id: string;
     value: number;
@@ -11,5 +13,5 @@ export class VirtualAccountTransactionResponseDTO {
     reference: string;
     createdAt: Date;
     updatedAt: Date;
-    transactionType: string = 'virtual_account';
+    transactionType: TransactionType.VirtualAccount;
 }
